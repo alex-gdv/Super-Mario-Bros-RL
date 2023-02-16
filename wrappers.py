@@ -211,7 +211,9 @@ class FrameStack(gym.Wrapper):
 
     def _get_ob(self):
         assert len(self.frames) == self.k
-        return LazyFrames(list(self.frames))
+        # LazyFrames do not work with SB3
+        # return LazyFrames(list(self.frames))
+        return np.stack(list(self.frames), axis=-1).squeeze()
 
 class ScaledFloatFrame(gym.ObservationWrapper):
     def __init__(self, env):
@@ -287,6 +289,5 @@ def wrap_mario(env):
     env = NoopResetEnv(env, noop_max=30)
     env = MaxAndSkipEnv(env, skip=4)
     env = WarpFrame(env)
-    env = ScaledFloatFrame(env)
     env = FrameStack(env, 4)
     return env
