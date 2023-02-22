@@ -10,6 +10,10 @@ import gym
 from wrappers import wrap_mario
 from callback import SMB_Callback
 
+ALL_STAGES = []
+for world in [1, 2, 3, 4, 5, 6, 7, 8]:
+    for stage in [1, 2, 3, 4]:
+        ALL_STAGES.append(f"{world}-{stage}")
 DAYTIME_CASTLE_STAGES = ["1-1", "1-3", "2-1", "2-3", "4-1", "5-1", "5-2", "5-3", "7-1", "7-3", "8-1", "8-2", "8-3"]
 NPROC = 4
 

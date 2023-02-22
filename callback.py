@@ -2,9 +2,10 @@ from stable_baselines3.common.callbacks import BaseCallback
 import os
 
 class SMB_Callback(BaseCallback):
-    def __init__(self, model_save_freq, model_path, verbose=0):
+    def __init__(self, model_save_freq, model_name, model_path="./models/", verbose=0):
         super(SMB_Callback, self).__init__(verbose)
         self.model_save_freq = model_save_freq
+        self.model_name = model_name
         self.model_path = model_path
 
     def _init_callback(self):
