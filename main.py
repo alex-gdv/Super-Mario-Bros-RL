@@ -28,15 +28,15 @@ def make_env(seed=None, smb_version="v0", movement=SIMPLE_MOVEMENT):
         return env
     return _f
 
-def train_DQN(**kwargs):
-    callback = SMB_Callback(model_save_freq=200000, model_path="./models/dqn")
+def train_DQN(model_name, **kwargs):
+    callback = SMB_Callback(model_save_freq=200000, model_name=model_name)
     env = SubprocVecEnv([make_env(seed, **kwargs) for seed in range(NPROC)])
     # hyperparameters source: https://github.com/jiseongHAN/Super-Mario-RL.git
     model = DQN("CnnPolicy", env, learning_rate=1e-6, buffer_size=50000, learning_starts=2500,  batch_size=256, train_freq=1, target_update_interval=50, verbose=1, tensorboard_log="./logs/")
     model.learn(total_timesteps=512*NPROC*1000, callback=callback)
 
-def train_PPO(**kwargs):
-    callback = SMB_Callback(model_save_freq=200000, model_path="./models/ppo")
+def train_PPO(model_name, **kwargs):
+    callback = SMB_Callback(model_save_freq=200000, model_name=model_name)
     env = SubprocVecEnv([make_env(seed, **kwargs) for seed in range(NPROC)])
     n_steps = 512
     model = PPO("CnnPolicy", env, learning_rate=1e-6, n_steps=n_steps, batch_size=32, verbose=1, tensorboard_log="./logs/")
