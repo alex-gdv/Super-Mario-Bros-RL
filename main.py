@@ -4,7 +4,7 @@ from stable_baselines3.common.vec_env.dummy_vec_env import DummyVecEnv
 import gym_super_mario_bros
 from gym_super_mario_bros.actions import SIMPLE_MOVEMENT
 from nes_py.wrappers import JoypadSpace
-import sys
+import argparse
 import gym
 
 from wrappers import wrap_mario
@@ -17,7 +17,7 @@ for world in [1, 2, 3, 4, 5, 6, 7, 8]:
 DAYTIME_CASTLE_STAGES = ["1-1", "1-3", "2-1", "2-3", "4-1", "5-1", "5-2", "5-3", "7-1", "7-3", "8-1", "8-2", "8-3"]
 NPROC = 4
 
-def make_env(seed=None, smb_version="v0", movement=SIMPLE_MOVEMENT):
+def make_env(seed=None, smb_version="v3", movement=SIMPLE_MOVEMENT):
     def _f():
         env = gym.make(f"SuperMarioBrosRandomStages-{smb_version}", stages=DAYTIME_CASTLE_STAGES)
         env = gym_super_mario_bros.make(f"SuperMarioBrosRandomStages-{smb_version}")
@@ -56,10 +56,12 @@ def test(algorithm, model_path, **kwargs):
                 break
 
 if __name__ == "__main__":
-    args_count = len(sys.argv)
-    # if args_count == 2:
-    #     if sys.argv[1] == "dqn":
-    #         train_DQN()
-    #     else:
-    #         train_PPO()
-    test(DQN, "./models/dqn_v3_simple_400000")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("algorithm", choices=["PPO", "DQN"])
+    parser.add_argument("model_name")
+    parser.add_argument("--smb_version", default="v3")
+    args = parser.parse_args()
+    if args.algorithm == "PPO":
+        train_PPO(args.model_name, smb_version=args.smb_version)
+    else:
+        train_DQN(args.model_name, smb_version=args.smb_version)

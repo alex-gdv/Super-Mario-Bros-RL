@@ -21,7 +21,7 @@ def mean_std(lst):
     return avg, std
 
 # model_name follows the rule {algorithm}_{SMB version}_{movement type}
-def eval_smb_model(algorithm, model_name, stages=ALL_STAGES, smb_version="v0", movement=SIMPLE_MOVEMENT, results_path="./results/", model_path="./models/"):
+def eval_smb_model(algorithm, model_name, stages=ALL_STAGES, smb_version="v3", movement=SIMPLE_MOVEMENT, results_path="./results/", model_path="./models/"):
     results = []
     model = algorithm.load(model_path + model_name)
     for stage in stages:
@@ -72,4 +72,4 @@ def eval_smb_model(algorithm, model_name, stages=ALL_STAGES, smb_version="v0", m
     file.close()
 
 if __name__ == "__main__":
-    eval_smb_model(PPO, "ppo_allStages_v3_simple_400000", smb_version="v3")
+    eval_smb_model(PPO, "ppo_allStages_v3_simple_400000")
