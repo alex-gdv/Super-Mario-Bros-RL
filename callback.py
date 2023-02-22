@@ -14,6 +14,8 @@ class SMB_Callback(BaseCallback):
 
     def _on_step(self):
         if self.num_timesteps % self.model_save_freq == 0:
-            print("Saving model...")
-            self.model.save(f"{self.model_path}_{self.num_timesteps}")
+            self.model.save(f"{self.model_path}{self.model_name}")
         return True
+    
+    def _on_training_end(self) -> None:
+        self.model.save(f"{self.model_path}{self.model_name}")
