@@ -15,11 +15,12 @@ for world in [1, 2, 3, 4, 5, 6, 7, 8]:
     for stage in [1, 2, 3, 4]:
         ALL_STAGES.append(f"{world}-{stage}")
 DAYTIME_CASTLE_STAGES = ["1-1", "1-3", "2-1", "2-3", "4-1", "5-1", "5-2", "5-3", "7-1", "7-3", "8-1", "8-2", "8-3"]
+STAGES_DICT = {"all_stages":ALL_STAGES, "daytime_castle_stages":DAYTIME_CASTLE_STAGES}
 NPROC = 4
 
-def make_env(seed=None, smb_version="v3", movement=SIMPLE_MOVEMENT):
+def make_env(seed=None, stages=DAYTIME_CASTLE_STAGES, smb_version="v3", movement=SIMPLE_MOVEMENT):
     def _f():
-        env = gym.make(f"SuperMarioBrosRandomStages-{smb_version}", stages=DAYTIME_CASTLE_STAGES)
+        env = gym.make(f"SuperMarioBrosRandomStages-{smb_version}", stages=stages)
         env = gym_super_mario_bros.make(f"SuperMarioBrosRandomStages-{smb_version}")
         env = JoypadSpace(env, movement)
         env = wrap_mario(env)
@@ -59,9 +60,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("algorithm", choices=["PPO", "DQN"])
     parser.add_argument("model_name")
+    parser.add_argument("--stages", default="daytime_castle_stages", choices=["all_stages", "daytime_castle_stages"])
     parser.add_argument("--smb_version", default="v3")
     args = parser.parse_args()
     if args.algorithm == "PPO":
-        train_PPO(args.model_name, smb_version=args.smb_version)
+        train_PPO(args.model_name, smb_version=args.smb_version, stages=STAGES_DICT[args.stages])
     else:
-        train_DQN(args.model_name, smb_version=args.smb_version)
+        train_DQN(args.model_name, smb_version=args.smb_version, stages=STAGES_DICT[args.stages])
