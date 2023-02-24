@@ -21,7 +21,6 @@ NPROC = 4
 def make_env(seed=None, stages=DAYTIME_CASTLE_STAGES, smb_version="v3", movement=SIMPLE_MOVEMENT):
     def _f():
         env = gym.make(f"SuperMarioBrosRandomStages-{smb_version}", stages=stages)
-        env = gym_super_mario_bros.make(f"SuperMarioBrosRandomStages-{smb_version}")
         env = JoypadSpace(env, movement)
         env = wrap_mario(env)
         if seed is not None:
@@ -43,9 +42,9 @@ def train_PPO(model_name, **kwargs):
     model = PPO("CnnPolicy", env, learning_rate=1e-6, n_steps=n_steps, batch_size=32, verbose=1, tensorboard_log="./logs/")
     model.learn(total_timesteps=n_steps*NPROC*1000, callback=callback)
 
-def test(algorithm, model_path, **kwargs):
+def test(algorithm, model_name, model_path="./models/", **kwargs):
     env = DummyVecEnv([make_env(**kwargs)])
-    model = algorithm.load(model_path, env)
+    model = algorithm.load(f"{model_path}{model_name}", env)
     for _ in range(10):
         obs = env.reset()
         while True:
@@ -61,9 +60,16 @@ if __name__ == "__main__":
     parser.add_argument("algorithm", choices=["PPO", "DQN"])
     parser.add_argument("model_name")
     parser.add_argument("--stages", default="daytime_castle_stages", choices=["all_stages", "daytime_castle_stages"])
-    parser.add_argument("--smb_version", default="v3")
+    parser.add_argument("--smb_version", default="v3", choices=["v0", "v1", "v2", "v3"])
+    parser.add_argument("--mode", default="train", choices=["test", "train"])
     args = parser.parse_args()
-    if args.algorithm == "PPO":
-        train_PPO(args.model_name, smb_version=args.smb_version, stages=STAGES_DICT[args.stages])
+    if args.mode == "train":
+        if args.algorithm == "PPO":
+            train_PPO(args.model_name, smb_version=args.smb_version, stages=STAGES_DICT[args.stages])
+        else:
+            train_DQN(args.model_name, smb_version=args.smb_version, stages=STAGES_DICT[args.stages])
     else:
-        train_DQN(args.model_name, smb_version=args.smb_version, stages=STAGES_DICT[args.stages])
+        if args.algorithm == "PPO":
+            test(PPO, args.model_name, smb_version=args.smb_version, stages=STAGES_DICT[args.stages])
+        else:
+            test(DQN, args.model_name, smb_version=args.smb_version, stages=STAGES_DICT[args.stages])

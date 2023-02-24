@@ -6,6 +6,7 @@ from gym_super_mario_bros.actions import SIMPLE_MOVEMENT
 import math
 from stable_baselines3 import PPO, DQN
 import numpy as np
+import argparse
 
 from wrappers import *
 
@@ -14,13 +15,14 @@ for world in [1, 2, 3, 4, 5, 6, 7, 8]:
     for stage in [1, 2, 3, 4]:
         ALL_STAGES.append(f"{world}-{stage}")
 DAYTIME_CASTLE_STAGES = ["1-1", "1-3", "2-1", "2-3", "4-1", "5-1", "5-2", "5-3", "7-1", "7-3", "8-1", "8-2", "8-3"]
+STAGES_DICT = {"all_stages":ALL_STAGES, "daytime_castle_stages":DAYTIME_CASTLE_STAGES}
 
 def mean_std(lst):
     avg = sum(lst) / len(lst)
     std = math.sqrt(sum([(num-avg)**2 for num in lst])/len(lst))
     return avg, std
 
-# model_name follows the rule {algorithm}_{SMB version}_{movement type}
+# model_name follows the rule {algorithm}__{stages}_{SMB version}_{movement type}
 def eval_smb_model(algorithm, model_name, stages=ALL_STAGES, smb_version="v3", movement=SIMPLE_MOVEMENT, results_path="./results/", model_path="./models/"):
     results = []
     model = algorithm.load(model_path + model_name)
@@ -72,4 +74,13 @@ def eval_smb_model(algorithm, model_name, stages=ALL_STAGES, smb_version="v3", m
     file.close()
 
 if __name__ == "__main__":
-    eval_smb_model(PPO, "ppo_allStages_v3_simple_400000")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("algorithm", choices=["PPO", "DQN"])
+    parser.add_argument("model_name")
+    parser.add_argument("--stages", default="daytime_castle_stages", choices=["all_stages", "daytime_castle_stages"])
+    parser.add_argument("--smb_version", default="v3", choices=["v0", "v1", "v2", "v3"])
+    args = parser.parse_args()
+    if args.algorithm == "PPO":
+        eval_smb_model(PPO, args.model_name, stages=STAGES_DICT[args.stages], smb_version=args.smb_version)
+    else:
+        eval_smb_model(DQN, args.model_name, stages=STAGES_DICT[args.stages], smb_version=args.smb_version)
