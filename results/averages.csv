@@ -1,3 +1,4 @@
+Model Name,Reward Avg,Reward Std,Distance Avg,Distance Std,Completion Rate Avg,Completion Rate Std
 dqn_allStages_v3_simple_400000,419.10,274.41,499.69,283.10,0.0000,0.0000
 ppo_allStages_v3_simple_400000,409.56,206.83,481.03,216.51,0.0000,0.0000
 ppo_daytimeCastleStages_v3_simple_2048000,562.22,254.95,634.22,260.30,0.0000,0.0000
