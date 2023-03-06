@@ -9,6 +9,7 @@ cv2.ocl.setUseOpenCL(False)
 from gym.wrappers import TimeLimit
 
 # this is a test comment
+# this is a second test comment
 
 class NoopResetEnv(gym.Wrapper):
     def __init__(self, env, noop_max=30):
